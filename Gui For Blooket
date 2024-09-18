@@ -29,32 +29,32 @@ details summary ~ * {
 }
 .cheat {
     border: none;
-    background: hsl(0, 0%, 20%);
+    background: hsl(211, 71%, 33%);
     padding: 5px;
     margin: 3px;
     width: 60%;
-    color: hsl(0, 0%, 100%);
+    color: hsl(255, 0%, 92%);
     transition: 0.2s;
     border-radius: 5px;
     cursor: pointer;
 }
 .cheat:hover {
-    background: hsl(0, 0%, 30%);
+    background: hsl(211, 83%, 46%);
 }`);
 
     const GUI = document.createElement('div');
     GUI.appendChild(style);
     GUI.style.width = '400px';
     //GUI.style.height = '500px';
-    GUI.style.background = 'hsl(0, 0%, 10%)';
+    GUI.style.background = 'hsl(211, 83%, 46%)';
     GUI.style.borderRadius = '10px';
     GUI.style.position = 'absolute';
     GUI.style.textAlign = 'center';
     GUI.style.fontFamily = 'Nunito';
-    GUI.style.color = 'white';
+    GUI.style.color = 'hsl(6, 2%, 6%)';
     GUI.style.overflow = 'hidden';
-    GUI.style.top = '50px';
-    GUI.style.left = '50px';
+    GUI.style.top = '25px';
+    GUI.style.left = '25px';
 
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     GUI.onmousedown = ((e = window.event) => {
@@ -84,13 +84,11 @@ details summary ~ * {
     header.style.paddingTop = '2px';
     header.style.fontSize = '1.5rem';
     header.style.textAlign = 'center'
-    header.innerHTML = `Sean Blooket Cheats <span style="font-size: 0.75rem">v4.10.22</span>`;
-
+    header.innerHTML = `SBC <span style="font-size: 0.75rem"></span>`;
     let loop;
-
     let close = document.createElement('button');
     header.appendChild(close);
-    close.style.background = 'red';
+    close.style.background = '#2237d6';
     close.style.height = '45px';
     close.style.width = '45px';
     close.style.border = 'none';
@@ -113,7 +111,7 @@ details summary ~ * {
 
     let minimize = document.createElement('button');
     header.appendChild(minimize);
-    minimize.style.background = '#444444';
+    minimize.style.background = '#2237d6';
     minimize.style.height = '45px';
     minimize.style.width = '45px';
     minimize.style.border = 'none';
@@ -136,7 +134,7 @@ details summary ~ * {
     bodyDiv.appendChild(body);
     GUI.appendChild(bodyDiv);
 
-    body.innerHTML = (`<span id="curPageEl">${getSite(true) ? `Current gamemode: ${getSite(true)}` : 'No game detected'}</span><br><span>(Press E to hide)</span><br>`);
+    body.innerHTML = (`<span id="curPageEl">${getSite(true) ? `Current gamemode: ${getSite(true)}` : 'No Game Found'}</span><br><span>(Press E to hide)</span><br>`);
     body.style.display = 'block';
     body.style.margin = '10px';
     //body.style.background = 'white';
@@ -151,7 +149,7 @@ details summary ~ * {
     bodyDiv.appendChild(footer);
     footer.style.fontSize = '0.9rem';
     footer.style.paddingBottom = '5px';
-    footer.innerHTML = (`<span>GUI by Sean Caballero<br>Cheats by <a style="color: lightblue" href="https://twitter.com/Seancaballero11">Sean Caballero</a></span>`);
+    footer.innerHTML = (`<span>GUI by SBC<br>Cheats by <a style="color: lightblue" href="https://youtube.com/@masterboy12312">SBC</a></span>`);
 
     var getValues = () => new Promise((e, t) => {
         try {
@@ -178,7 +176,7 @@ details summary ~ * {
         return Object.values(document.querySelector('#app > div > div'))[1].children[1]._owner;
     }
 
-    let autoAnswer, highlightAnswers, choiceESP, autoPassword, chestESP;
+    let autoAnswer, CorrectAnswer, ESP, AutoCorrect, ChestESP;
 
     let cheats = {
         global: {
@@ -218,8 +216,8 @@ details summary ~ * {
                 if (!window.location.pathname.split('/').includes('lobby')) return alert('You must be in a game lobby! (e.g. https://www.blooket.com/play/lobby)');
                 reactHandler().stateNode.setState({ lockedBlooks: [], takenBlooks: [] });
             },
-            'Toggle Auto Answer': () => { autoAnswer = !autoAnswer },
-            'Toggle Highlight Answers': () => { highlightAnswers = !highlightAnswers },
+            'AutoCorrect': () => { autoAnswer = !autoAnswer },
+            'ESP': () => { highlightAnswers = !highlightAnswers },
             'Spam Open Boxes': () => {
                 let box = prompt(`Which box do you want to open? (e.g. Space)`);
                 let boxes = {
@@ -230,71 +228,78 @@ details summary ~ * {
                     breakfast: 15,
                     medieval: 15,
                     wonderland: 15
+                };
+                
+                if (!Object.keys(boxes).includes(box.toLowerCase())) {
+                    alert('I could not find that box!');
+                    console.error('Box not found:', box);
+                    return;
                 }
-                if (!Object.keys(boxes).includes(box.toLowerCase())) return alert('I could not find that box!');
+                
                 let amount = prompt('How many boxes do you want to open?');
-                fetch("https://api.blooket.com/api/users", { credentials: "include" }).then(x => x.json()).then(x => {
-                    if (x.tokens < boxes[box.toLowerCase()] * amount) amount = Math.floor(x.tokens / boxes[box.toLowerCase()]);
-                    if (!amount) return alert('You do not have enough tokens!');
-                    let wait = ms => new Promise(r => setTimeout(r, ms));
-                    getValues().then(async e => {
-                        let error = false,
-                            blooks = [];
-                        for (let i = 0; i < amount; i++) {
-                            fetch("https://api.blooket.com/api/users/unlockblook", {
-                                method: "put",
-                                credentials: "include",
-                                headers: {
-                                    "content-type": "application/json",
-                                    "X-Blooket-Build": e.blooketBuild
-                                },
-                                body: await encodeValues({
-                                    name: x.name,
-                                    box: box.charAt(0).toUpperCase() + box.slice(1).toLowerCase()
-                                }, e.secret)
-                            }).then(async x => {
-                                let blook = await x.json();
-                                blooks.push(blook.unlockedBlook);
-                                alert(`${blook.unlockedBlook} (${i + 1}/${amount})`);
-                            }).catch(() => { error = true });
-                            await wait(750);
-                            if (error) break;
+                if (isNaN(amount) || amount <= 0) {
+                    alert('Please enter a valid number of boxes to open!');
+                    console.error('Invalid amount:', amount);
+                    return;
+                }
+                
+                fetch("https://api.blooket.com/api/users", { credentials: "include" })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
+                    .then(x => {
+                        console.log('User data:', x);
+                        if (x.tokens < boxes[box.toLowerCase()] * amount) {
+                            amount = Math.floor(x.tokens / boxes[box.toLowerCase()]);
                         }
-                        let count = {};
-                        blooks.forEach(blook => { count[blook] = (count[blook] || 0) + 1 });
-                        alert(`Results:\n` + Object.entries(count).map((x) => `    ${x[1]} ${x[0]}`).join(`\n`));
-                    }).catch(() => alert('There was an error encoding requests!'));
-                }).catch(() => alert('There was an error getting username!'));
-            },
-            'Auto Sell Dupes': () => {
-                fetch("https://api.blooket.com/api/users", { credentials: "include" }).then(x => x.json()).then(x => {
-                    let blooks = Object.entries(x.unlocks).map(x => [x[0], x[1] - 1]).filter(x => x[1] > 0);
-                    let wait = ms => new Promise(r => setTimeout(r, ms));
-                    getValues().then(async e => {
-                        let error = false;
-                        alert('Selling duplicate blooks, please wait');
-                        for (let [blook, numSold] of blooks) {
-                            fetch("https://api.blooket.com/api/users/sellblook", {
-                                method: "put",
-                                credentials: "include",
-                                headers: {
-                                    "content-type": "application/json",
-                                    "X-Blooket-Build": e.blooketBuild
-                                },
-                                body: await encodeValues({
-                                    name: x.name,
-                                    blook,
-                                    numSold
-                                }, e.secret)
-                            }).catch(() => { error = true });
-                            await wait(750);
-                            if (error) break;
-                        }
-                        alert(`Results:\n` + blooks.map((x) => `    ${x[1]} ${x[0]}`).join(`\n`));
-                    }).catch(() => alert('There was an error encoding requests!'));
-                }).catch(() => alert('There was an error getting user data!'));
-            }
-        },
+                        if (!amount) return alert('You do not have enough tokens!');
+                
+                        let wait = ms => new Promise(r => setTimeout(r, ms));
+                        getValues().then(async e => {
+                            let error = false;
+                            let blooks = [];
+                
+                            for (let i = 0; i < amount; i++) {
+                                fetch("https://api.blooket.com/api/users/unlockblook", {
+                                    method: "PUT",
+                                    credentials: "include",
+                                    headers: {
+                                        "content-type": "application/json",
+                                        "X-Blooket-Build": e.blooketBuild
+                                    },
+                                    body: await encodeValues({
+                                        name: x.name,
+                                        box: box.charAt(0).toUpperCase() + box.slice(1).toLowerCase()
+                                    }, e.secret)
+                                })
+                                .then(async response => {
+                                    if (!response.ok) throw new Error('Failed to unlock blook');
+                                    let blook = await response.json();
+                                    blooks.push(blook.unlockedBlook);
+                                    alert(`${blook.unlockedBlook} (${i + 1}/${amount})`);
+                                })
+                                .catch(err => {
+                                    error = true;
+                                    console.error('Unlock blook error:', err);
+                                });
+                                await wait(750);
+                                if (error) break;
+                            }
+                
+                            let count = {};
+                            blooks.forEach(blook => { count[blook] = (count[blook] || 0) + 1 });
+                            alert(`Results:\n` + Object.entries(count).map((x) => `    ${x[1]} ${x[0]}`).join(`\n`));
+                        }).catch(err => {
+                            console.error('Error encoding requests:', err);
+                            alert('There was an error encoding requests!');
+                        });
+                    })
+                    .catch(err => {
+                        console.error('Error getting username:', err);
+                        alert('There was an error getting username!');
+                    });
+                
         cafe: {
             'Infinite Food': () => {
                 if (document.location.pathname != "/cafe") return alert("This cheat doesn't work in the shop!");
